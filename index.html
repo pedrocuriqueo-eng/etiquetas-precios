@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creador de Etiquetas Luna de Perla</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&display=swap');
+
+  :root {
+    --yellow: #FFE600;
+    --black: #111;
+    --gray: #f0f0f0;
+    --accent: #e63946;
+    --panel: #1a1a1a;
+    --border: #2e2e2e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--panel);
+    color: #fff;
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 16px 60px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    letter-spacing: 4px;
+    color: var(--yellow);
+    text-shadow: 3px 3px 0 #000;
+  }
+
+  header p {
+    color: #888;
+    font-size: 0.9rem;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  .layout {
+    display: flex;
+    gap: 32px;
+    width: 100%;
+    max-width: 980px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* PANEL DE CONTROLES */
+  .controls {
+    background: #222;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    width: 320px;
+    flex-shrink: 0;
+  }
+
+  .controls h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    color: var(--yellow);
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--yellow);
+    padding-bottom: 8px;
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 6px;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #fff;
+    font-family: 'Barlow', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  select:focus {
+    border-color: var(--yellow);
+  }
+
+  .row2 { display: flex; gap: 10px; }
+  .row2 .field { flex: 1; }
+
+  input[type="color"] {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #333;
+    border-radius: 6px;
+    background: #111;
+    cursor: pointer;
+    padding: 2px;
+  }
+
+  .toggle-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 8px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #aaa;
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+
+  .toggle-btn.active {
+    background: var(--yellow);
+    border-color: var(--yellow);
+    color: #111;
+  }
+
+  .btn-print {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    background: var(--yellow);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 3px;
+    color: #111;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    box-shadow: 4px 4px 0 #000;
+  }
+
+  .btn-print:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 #000; }
+  .btn-print:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 #000; }
+
+  .btn-add {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid #444;
+    border-radius: 8px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ccc;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-add:hover { border-color: var(--yellow); color: var(--yellow); }
+
+  /* PANEL DE PREVISUALIZACIÓN */
+  .preview-area {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .preview-area h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    color: var(--yellow);
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--yellow);
+    padding-bottom: 8px;
+  }
+
+  .preview-canvas {
+    background: #2a2a2a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+    min-height: 200px;
+  }
+
+  /* ETIQUETA */
+  .etiqueta {
+    /* 8cm x 4cm — usamos px como aproximación visual en pantalla: 1cm ≈ 37.8px */
+    width: 302px;   /* 8cm */
+    height: 151px;  /* 4cm */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .etiqueta .nombre-bar {
+    width: 100%;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-weight: 700;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+  }
+
+  .etiqueta .precio-bar {
+    width: 100%;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .etiqueta .precio-bar .simbolo {
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .etiqueta .precio-bar .monto {
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .etiqueta .precio-bar .decimales {
+    font-weight: 700;
+    align-self: flex-end;
+    margin-bottom: 4px;
+  }
+
+  .etiqueta .watermark {
+    position: absolute;
+    bottom: 4px;
+    right: 8px;
+    font-size: 7px;
+    color: #ccc;
+    letter-spacing: 0.5px;
+    font-family: 'Barlow', sans-serif;
+  }
+
+  /* SECCIÓN ETIQUETAS GUARDADAS */
+  .saved-section {
+    margin-top: 24px;
+  }
+
+  .saved-section h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    color: #888;
+    margin-bottom: 12px;
+  }
+
+  .saved-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .saved-item {
+    position: relative;
+  }
+
+  .saved-item .delete-btn {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    background: var(--accent);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+
+  /* PRINT */
+  @media print {
+    body { background: #fff; padding: 0; }
+    header, .controls, .saved-section h3, .preview-area h2, #liveLabel, .preview-canvas { display: none; }
+    .layout { display: block; }
+    .saved-section {
+      margin-top: 0;
+    }
+    .saved-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5mm;
+      padding: 10mm;
+    }
+    .etiqueta {
+      box-shadow: none;
+      border: 0.5px solid #ccc;
+      width: 8cm;
+      height: 4cm;
+      padding: 2mm 3mm;
+    }
+    .btn-print, .btn-add, .toggle-btn, .delete-btn { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏷 Creador de Etiquetas Luna de Perla</h1>
+  <p>Etiquetas de precio 8cm × 4cm · Listas para imprimir</p>
+</header>
+
+<div class="layout">
+  <!-- CONTROLES -->
+  <div class="controls">
+    <h2>Configurar Etiqueta</h2>
+
+    <div class="field">
+      <label>Nombre del producto</label>
+      <input type="text" id="nombre" placeholder="Ej: Arroz 1kg" maxlength="40">
+    </div>
+
+    <div class="field">
+      <label>Símbolo de moneda</label>
+      <div style="padding: 10px 12px; background:#111; border:1px solid #333; border-radius:6px; color:var(--yellow); font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:2px;">
+        $ — Peso Chileno (CLP)
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>Precio entero</label>
+        <input type="text" id="precio" placeholder="990.000" inputmode="numeric">
+      </div>
+
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>Color fondo barra</label>
+        <input type="color" id="colorFondo" value="#FFE600">
+      </div>
+      <div class="field">
+        <label>Color texto</label>
+        <input type="color" id="colorTexto" value="#111111">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Tamaño fuente — Precio</label>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="setFontPrecio(this,'small')">Chico</button>
+        <button class="toggle-btn active" onclick="setFontPrecio(this,'medium')">Medio</button>
+        <button class="toggle-btn" onclick="setFontPrecio(this,'large')">Grande</button>
+        <button class="toggle-btn" onclick="setFontPrecio(this,'xlarge')">XL</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Tamaño fuente — Nombre</label>
+      <div class="toggle-group">
+        <button class="toggle-btn" onclick="setFontNombre(this,'small')">Chico</button>
+        <button class="toggle-btn active" onclick="setFontNombre(this,'medium')">Medio</button>
+        <button class="toggle-btn" onclick="setFontNombre(this,'large')">Grande</button>
+        <button class="toggle-btn" onclick="setFontNombre(this,'xlarge')">XL</button>
+      </div>
+    </div>
+
+
+
+    <button class="btn-add" onclick="agregarEtiqueta()">＋ Agregar a la hoja</button>
+    <button class="btn-print" onclick="window.print()">🖨 IMPRIMIR</button>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="preview-area">
+    <h2>Vista Previa</h2>
+    <div class="preview-canvas" id="previewCanvas">
+      <!-- etiqueta live preview -->
+      <div id="liveLabel"></div>
+    </div>
+
+    <div class="saved-section">
+      <h3>Etiquetas agregadas</h3>
+      <div class="saved-list" id="savedList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const symbol = '$';
+  let fontPrecio = 'medium';
+  let fontNombre = 'medium';
+
+  const precioSizeMap = { small: 42, medium: 58, large: 72, xlarge: 88 };
+  const nombreSizeMap = { small: 16, medium: 22, large: 28, xlarge: 34 };
+
+  function setFontPrecio(btn, val) {
+    fontPrecio = val;
+    btn.closest('.toggle-group').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderLive();
+  }
+
+  function setFontNombre(btn, val) {
+    fontNombre = val;
+    btn.closest('.toggle-group').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderLive();
+  }
+  function formatPrecio(val) {
+    const num = parseInt(String(val).replace(/\D/g, ''), 10);
+    if (isNaN(num)) return '';
+    return num.toLocaleString('es-CL');
+  }
+
+  // Auto-formatear el campo mientras se escribe
+  document.addEventListener('DOMContentLoaded', () => {
+    const precioInput = document.getElementById('precio');
+    precioInput.addEventListener('input', () => {
+      const raw = precioInput.value.replace(/\D/g, '');
+      const num = parseInt(raw, 10);
+      if (!isNaN(num)) {
+        const formatted = num.toLocaleString('es-CL');
+        precioInput.value = formatted;
+      } else {
+        precioInput.value = '';
+      }
+      renderLive();
+    });
+  });
+
+  function buildEtiqueta(nombre, precio, colorFondo, colorTexto) {
+    const mainPx = precioSizeMap[fontPrecio];
+    const namePx = nombreSizeMap[fontNombre];
+    const barH1 = 44;
+    const barH2 = 88;
+
+    const el = document.createElement('div');
+    el.className = 'etiqueta';
+    el.style.fontFamily = "'Bebas Neue', sans-serif";
+
+    // Barra nombre
+    const nombreBar = document.createElement('div');
+    nombreBar.className = 'nombre-bar';
+    nombreBar.style.background = colorFondo;
+    nombreBar.style.color = colorTexto;
+    nombreBar.style.height = barH1 + 'px';
+    nombreBar.style.fontSize = namePx + 'px';
+    nombreBar.textContent = nombre || 'PRODUCTO';
+    el.appendChild(nombreBar);
+
+    // Barra precio
+    const precioBar = document.createElement('div');
+    precioBar.className = 'precio-bar';
+    precioBar.style.background = colorFondo;
+    precioBar.style.color = colorTexto;
+    precioBar.style.height = barH2 + 'px';
+
+    const sim = document.createElement('span');
+    sim.className = 'simbolo';
+    sim.style.fontSize = (mainPx * 0.45) + 'px';
+    sim.textContent = symbol;
+
+    const monto = document.createElement('span');
+    monto.className = 'monto';
+    monto.style.fontSize = mainPx + 'px';
+    monto.textContent = formatPrecio(precio) || '0';
+
+    precioBar.appendChild(sim);
+    precioBar.appendChild(monto);
+
+
+    el.appendChild(precioBar);
+
+    const wm = document.createElement('div');
+    wm.className = 'watermark';
+    wm.textContent = '8cm × 4cm';
+    el.appendChild(wm);
+
+    return el;
+  }
+
+  function getValues() {
+    return {
+      nombre: document.getElementById('nombre').value.trim().toUpperCase(),
+      precio: document.getElementById('precio').value.replace(/\D/g, ''),
+      colorFondo: document.getElementById('colorFondo').value,
+      colorTexto: document.getElementById('colorTexto').value,
+    };
+  }
+
+  function renderLive() {
+    const { nombre, precio, colorFondo, colorTexto } = getValues();
+    const container = document.getElementById('liveLabel');
+    container.innerHTML = '';
+    container.appendChild(buildEtiqueta(nombre, precio, colorFondo, colorTexto));
+  }
+
+  function agregarEtiqueta() {
+    const { nombre, precio, colorFondo, colorTexto } = getValues();
+    if (!precio) { alert('Ingresa un precio antes de agregar.'); return; }
+
+    const savedList = document.getElementById('savedList');
+    const wrapper = document.createElement('div');
+    wrapper.className = 'saved-item';
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'delete-btn';
+    delBtn.textContent = '✕';
+    delBtn.onclick = () => wrapper.remove();
+
+    wrapper.appendChild(delBtn);
+    wrapper.appendChild(buildEtiqueta(nombre, precio, colorFondo, colorTexto));
+    savedList.appendChild(wrapper);
+  }
+
+  // Live update on any input change
+  ['nombre','colorFondo','colorTexto'].forEach(id => {
+    document.getElementById(id).addEventListener('input', renderLive);
+  });
+
+  // Initial render
+  renderLive();
+</script>
+</body>
+</html>
