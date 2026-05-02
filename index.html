@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -169,7 +170,23 @@
     box-shadow: 4px 4px 0 #000;
   }
 
-  .btn-print:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 #000; }
+  .btn-thermal {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px;
+    background: #111;
+    border: 2px solid var(--yellow);
+    border-radius: 8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+    color: var(--yellow);
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s, background 0.2s;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .btn-thermal:hover { background: #1e1e1e; transform: translate(-1px,-1px); box-shadow: 5px 5px 0 #000; }
+  .btn-thermal:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 #000; }
   .btn-print:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 #000; }
 
   .btn-add {
@@ -349,9 +366,162 @@
     }
     .btn-print, .btn-add, .toggle-btn, .delete-btn { display: none; }
   }
+
+  /* ===== LOGIN ===== */
+  #loginScreen {
+    position: fixed; inset: 0; background: var(--panel);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; flex-direction: column;
+  }
+  .login-box {
+    background: #222; border: 1px solid var(--border); border-radius: 16px;
+    padding: 40px 36px; width: 100%; max-width: 360px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  }
+  .login-box h2 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 4px;
+    color: var(--yellow); text-align: center; margin-bottom: 4px;
+  }
+  .login-box p { text-align: center; color: #666; font-size: 0.8rem; margin-bottom: 28px; letter-spacing: 1px; }
+  .login-box .field { margin-bottom: 14px; }
+  .login-error { color: var(--accent); font-size: 0.82rem; text-align: center; margin-top: 10px; min-height: 18px; }
+  .btn-login {
+    width: 100%; margin-top: 8px; padding: 13px; background: var(--yellow);
+    border: none; border-radius: 8px; font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem; letter-spacing: 3px; color: #111; cursor: pointer;
+    box-shadow: 4px 4px 0 #000; transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .btn-login:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 #000; }
+  .btn-login:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 #000; }
+
+  /* ===== TOPBAR ===== */
+  #topbar {
+    display: none; width: 100%; max-width: 980px;
+    justify-content: space-between; align-items: center;
+    margin-bottom: 16px; padding: 10px 16px;
+    background: #222; border: 1px solid var(--border); border-radius: 10px;
+  }
+  #topbar .tb-left { display: flex; align-items: center; gap: 12px; }
+  #topbar .tb-role {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px;
+    padding: 4px 10px; border-radius: 4px; background: var(--yellow); color: #111;
+  }
+  #topbar .tb-role.usuario { background: #333; color: #aaa; }
+  #topbar .tb-user { color: #ccc; font-size: 0.85rem; }
+  #topbar .tb-right { display: flex; gap: 8px; }
+  .btn-tb {
+    padding: 7px 14px; border-radius: 6px; border: 1px solid #444;
+    background: transparent; color: #ccc; font-family: 'Barlow', sans-serif;
+    font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-tb:hover { border-color: var(--yellow); color: var(--yellow); }
+  .btn-tb.danger:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ===== PANEL ADMIN ===== */
+  #adminPanel {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    z-index: 8000; align-items: center; justify-content: center;
+  }
+  .admin-box {
+    background: #1e1e1e; border: 1px solid var(--border); border-radius: 16px;
+    padding: 32px; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto;
+  }
+  .admin-box h2 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 3px;
+    color: var(--yellow); margin-bottom: 20px; border-bottom: 2px solid var(--yellow); padding-bottom: 8px;
+  }
+  .admin-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 2px; color: #aaa; margin: 20px 0 10px; }
+  .user-list { list-style: none; }
+  .user-list li {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px; background: #111; border-radius: 6px; margin-bottom: 6px; font-size: 0.9rem;
+  }
+  .user-list li .u-info { display: flex; align-items: center; gap: 8px; }
+  .user-list li .u-name { color: #fff; font-weight: 600; }
+  .u-role { font-size: 0.72rem; padding: 2px 8px; border-radius: 3px; font-weight: 700; letter-spacing: 1px; }
+  .u-role.admin { background: var(--yellow); color: #111; }
+  .u-role.usuario { background: #333; color: #aaa; }
+  .btn-del-user {
+    background: transparent; border: 1px solid #444; color: var(--accent);
+    border-radius: 4px; padding: 3px 8px; font-size: 0.75rem; cursor: pointer; transition: background 0.2s;
+  }
+  .btn-del-user:hover { background: var(--accent); color: #fff; }
+  .add-user-form { display: flex; flex-direction: column; gap: 10px; }
+  .add-user-form .row2 { display: flex; gap: 10px; }
+  .btn-save-user {
+    padding: 10px; background: var(--yellow); border: none; border-radius: 6px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px; color: #111; cursor: pointer;
+  }
+  .btn-close-admin {
+    width: 100%; margin-top: 16px; padding: 10px; background: transparent;
+    border: 1px solid #444; border-radius: 6px; color: #888;
+    font-family: 'Barlow', sans-serif; font-size: 0.9rem; cursor: pointer;
+  }
+  .btn-close-admin:hover { border-color: #888; color: #ccc; }
+  @media print { #loginScreen, #topbar, #adminPanel { display: none !important; } }
 </style>
 </head>
 <body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h2>🏷 Luna de Perla</h2>
+    <p>SISTEMA DE ETIQUETAS · ACCESO</p>
+    <div class="field">
+      <label>Usuario</label>
+      <input type="text" id="loginUser" placeholder="Ingresa tu usuario" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" placeholder="Ingresa tu contraseña" autocomplete="current-password">
+    </div>
+    <button class="btn-login" onclick="doLogin()">ENTRAR</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-left">
+    <span class="tb-role" id="tbRole">ADMIN</span>
+    <span class="tb-user" id="tbUser">usuario</span>
+  </div>
+  <div class="tb-right">
+    <button class="btn-tb" id="btnAdminPanel" onclick="abrirAdmin()" style="display:none">⚙ Gestionar Usuarios</button>
+    <button class="btn-tb danger" onclick="doLogout()">✕ Cerrar Sesión</button>
+  </div>
+</div>
+
+<!-- PANEL ADMIN -->
+<div id="adminPanel">
+  <div class="admin-box">
+    <h2>⚙ Gestión de Usuarios</h2>
+    <h3>Usuarios Registrados</h3>
+    <ul class="user-list" id="userList"></ul>
+    <h3>Agregar Nuevo Usuario</h3>
+    <div class="add-user-form">
+      <div class="field">
+        <label>Nombre de usuario</label>
+        <input type="text" id="newUsername" placeholder="ej: maria">
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="newPassword" placeholder="contraseña segura">
+      </div>
+      <div class="field">
+        <label>Rol</label>
+        <select id="newRole">
+          <option value="usuario">Usuario</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <button class="btn-save-user" onclick="agregarUsuario()">＋ AGREGAR USUARIO</button>
+      <div class="login-error" id="adminError"></div>
+    </div>
+    <button class="btn-close-admin" onclick="cerrarAdmin()">Cerrar</button>
+  </div>
+</div>
 
 <header>
   <h1>🏷 Creador de Etiquetas Luna de Perla</h1>
@@ -418,6 +588,7 @@
 
     <button class="btn-add" onclick="agregarEtiqueta()">＋ Agregar a la hoja</button>
     <button class="btn-print" onclick="window.print()">🖨 IMPRIMIR</button>
+    <button class="btn-thermal" onclick="imprimirTermica()">🖨 IMPRIMIR TÉRMICA</button>
   </div>
 
   <!-- PREVIEW -->
@@ -435,7 +606,7 @@
   </div>
 </div>
 
-<script>
+<script type="module">
   const symbol = '$';
   let fontPrecio = 'medium';
   let fontNombre = 'medium';
@@ -563,10 +734,278 @@
     savedList.appendChild(wrapper);
   }
 
-  // Live update on any input change
+  function imprimirTermica() {
+    const savedList = document.getElementById('savedList');
+    const items = savedList.querySelectorAll('.etiqueta');
+
+    if (items.length === 0) {
+      alert('No hay etiquetas agregadas. Usa el botón ＋ Agregar a la hoja primero.');
+      return;
+    }
+
+    // Construir HTML para ventana térmica
+    let etiquetasHTML = '';
+    items.forEach(etiqueta => {
+      const nombre = etiqueta.querySelector('.nombre-bar')?.textContent?.trim() || '';
+      const simbolo = etiqueta.querySelector('.simbolo')?.textContent?.trim() || '$';
+      const monto = etiqueta.querySelector('.monto')?.textContent?.trim() || '';
+
+      etiquetasHTML += `
+        <div class="etiqueta-termica">
+          <div class="et-nombre">${nombre}</div>
+          <div class="et-precio">${simbolo}${monto}</div>
+          <div class="et-separador"></div>
+        </div>
+      `;
+    });
+
+    const ventana = window.open('', '_blank', 'width=400,height=600');
+    ventana.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Impresión Térmica 80mm</title>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body {
+            width: 72mm;
+            font-family: 'Courier New', monospace;
+            background: #fff;
+            color: #000;
+            padding: 3mm 2mm;
+          }
+          .etiqueta-termica {
+            width: 100%;
+            margin-bottom: 4mm;
+            text-align: left;
+          }
+          .et-nombre {
+            font-size: 14pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-top: 2px solid #000;
+            padding-top: 2mm;
+            padding-left: 1mm;
+          }
+          .et-precio {
+            font-size: 28pt;
+            font-weight: 900;
+            letter-spacing: -1px;
+            padding-left: 1mm;
+            line-height: 1.1;
+          }
+          .et-separador {
+            border-bottom: 1px dashed #000;
+            margin-top: 3mm;
+          }
+          @media print {
+            body { width: 72mm; }
+            @page {
+              size: 80mm auto;
+              margin: 0;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        ${etiquetasHTML}
+        <script>
+          window.onload = function() {
+            window.print();
+            window.onafterprint = function() { window.close(); };
+          };
+        <\/script>
+      </body>
+      </html>
+    `);
+    ventana.document.close();
+  }
+
+  // ===== FIREBASE CONFIG =====
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDBakpz_zvbKJzB3TcL1gnB-zFFLdIpEG4",
+    authDomain: "etiquetas-luna-de-perla.firebaseapp.com",
+    projectId: "etiquetas-luna-de-perla",
+    storageBucket: "etiquetas-luna-de-perla.firebasestorage.app",
+    messagingSenderId: "776154042632",
+    appId: "1:776154042632:web:0dd8bb77533f20ad4b9cbd"
+  };
+
+  const firebaseApp = initializeApp(firebaseConfig);
+  const db = getFirestore(firebaseApp);
+  const usuariosCol = collection(db, 'usuarios');
+
+  // Crear admin por defecto si no existe
+  async function initAdmin() {
+    const q = query(usuariosCol, where('username', '==', 'admin'));
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      await addDoc(usuariosCol, { username: 'admin', password: 'admin123', role: 'admin' });
+    }
+  }
+
+  function getSession() {
+    const s = sessionStorage.getItem('lp_session');
+    return s ? JSON.parse(s) : null;
+  }
+
+  async function doLogin() {
+    const username = document.getElementById('loginUser').value.trim().toLowerCase();
+    const password = document.getElementById('loginPass').value;
+    const errEl = document.getElementById('loginError');
+    errEl.style.color = '#888';
+    errEl.textContent = 'Verificando...';
+
+    try {
+      const q = query(usuariosCol, where('username', '==', username), where('password', '==', password));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        errEl.style.color = 'var(--accent)';
+        errEl.textContent = 'Usuario o contraseña incorrectos.';
+        return;
+      }
+      const user = snap.docs[0].data();
+      sessionStorage.setItem('lp_session', JSON.stringify({ username: user.username, role: user.role }));
+      errEl.textContent = '';
+      iniciarSesion(user);
+    } catch (e) {
+      errEl.style.color = 'var(--accent)';
+      errEl.textContent = 'Error de conexión. Intenta de nuevo.';
+    }
+  }
+
+  function iniciarSesion(user) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('topbar').style.display = 'flex';
+    document.getElementById('tbUser').textContent = user.username;
+    const roleEl = document.getElementById('tbRole');
+    roleEl.textContent = user.role.toUpperCase();
+    roleEl.className = 'tb-role ' + user.role;
+    if (user.role === 'admin') {
+      document.getElementById('btnAdminPanel').style.display = 'inline-block';
+    }
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem('lp_session');
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('topbar').style.display = 'none';
+    document.getElementById('btnAdminPanel').style.display = 'none';
+    document.getElementById('loginUser').value = '';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginError').textContent = '';
+  }
+
+  function abrirAdmin() {
+    renderUserList();
+    document.getElementById('adminPanel').style.display = 'flex';
+  }
+
+  function cerrarAdmin() {
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('adminError').textContent = '';
+    document.getElementById('newUsername').value = '';
+    document.getElementById('newPassword').value = '';
+  }
+
+  async function renderUserList() {
+    const session = getSession();
+    const list = document.getElementById('userList');
+    list.innerHTML = '<li style="color:#666;font-size:0.85rem;padding:8px">Cargando...</li>';
+    try {
+      const snap = await getDocs(usuariosCol);
+      list.innerHTML = '';
+      snap.docs.forEach(docSnap => {
+        const u = docSnap.data();
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div class="u-info">
+            <span class="u-name">${u.username}</span>
+            <span class="u-role ${u.role}">${u.role}</span>
+          </div>
+          ${u.username !== session?.username
+            ? `<button class="btn-del-user" onclick="eliminarUsuario('${docSnap.id}', '${u.username}')">Eliminar</button>`
+            : '<span style="color:#555;font-size:0.75rem">(tú)</span>'}
+        `;
+        list.appendChild(li);
+      });
+    } catch(e) {
+      list.innerHTML = '<li style="color:var(--accent);font-size:0.85rem;padding:8px">Error al cargar usuarios.</li>';
+    }
+  }
+
+  async function agregarUsuario() {
+    const username = document.getElementById('newUsername').value.trim().toLowerCase();
+    const password = document.getElementById('newPassword').value;
+    const role = document.getElementById('newRole').value;
+    const errEl = document.getElementById('adminError');
+
+    if (!username || !password) { errEl.style.color='var(--accent)'; errEl.textContent = 'Completa todos los campos.'; return; }
+    if (username.length < 3) { errEl.style.color='var(--accent)'; errEl.textContent = 'El usuario debe tener al menos 3 caracteres.'; return; }
+    if (password.length < 4) { errEl.style.color='var(--accent)'; errEl.textContent = 'La contraseña debe tener al menos 4 caracteres.'; return; }
+
+    try {
+      const q = query(usuariosCol, where('username', '==', username));
+      const snap = await getDocs(q);
+      if (!snap.empty) { errEl.style.color='var(--accent)'; errEl.textContent = 'Ese usuario ya existe.'; return; }
+
+      await addDoc(usuariosCol, { username, password, role });
+      errEl.style.color = '#4caf50';
+      errEl.textContent = `Usuario "${username}" creado correctamente.`;
+      document.getElementById('newUsername').value = '';
+      document.getElementById('newPassword').value = '';
+      renderUserList();
+      setTimeout(() => { errEl.textContent = ''; }, 2500);
+    } catch(e) {
+      errEl.style.color='var(--accent)';
+      errEl.textContent = 'Error al crear usuario.';
+    }
+  }
+
+  async function eliminarUsuario(docId, username) {
+    if (!confirm(`¿Eliminar al usuario "${username}"?`)) return;
+    try {
+      await deleteDoc(doc(db, 'usuarios', docId));
+      renderUserList();
+    } catch(e) {
+      alert('Error al eliminar usuario.');
+    }
+  }
+
+  // Al cargar: verificar sesión activa e inicializar admin
+  window.addEventListener('load', async () => {
+    await initAdmin();
+    const session = getSession();
+    if (session) iniciarSesion(session);
+  });
+
+  // Enter en login
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') {
+      doLogin();
+    }
+  });
+
   ['nombre','colorFondo','colorTexto'].forEach(id => {
     document.getElementById(id).addEventListener('input', renderLive);
   });
+
+  // Exponer funciones al scope global para los onclick del HTML
+  window.doLogin = doLogin;
+  window.doLogout = doLogout;
+  window.abrirAdmin = abrirAdmin;
+  window.cerrarAdmin = cerrarAdmin;
+  window.agregarUsuario = agregarUsuario;
+  window.eliminarUsuario = eliminarUsuario;
+  window.setFontPrecio = setFontPrecio;
+  window.setFontNombre = setFontNombre;
+  window.agregarEtiqueta = agregarEtiqueta;
+  window.imprimirTermica = imprimirTermica;
 
   // Initial render
   renderLive();
