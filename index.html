@@ -458,6 +458,26 @@
     font-family: 'Barlow', sans-serif; font-size: 0.9rem; cursor: pointer;
   }
   .btn-close-admin:hover { border-color: #888; color: #ccc; }
+
+  /* Igualar input password al input text en login */
+  #loginPass {
+    width: 100%;
+    padding: 10px 12px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #fff;
+    font-family: 'Barlow', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+  }
+  #loginPass:focus { border-color: var(--yellow); }
+  #loginPass::placeholder { color: #555; font-family: 'Barlow', sans-serif; font-size: 1rem; }
+
   @media print { #loginScreen, #topbar, #adminPanel { display: none !important; } }
 </style>
 </head>
