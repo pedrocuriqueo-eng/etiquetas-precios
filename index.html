@@ -446,6 +446,19 @@
     border-radius: 4px; padding: 3px 8px; font-size: 0.75rem; cursor: pointer; transition: background 0.2s;
   }
   .btn-del-user:hover { background: var(--accent); color: #fff; }
+  .btn-edit-pass {
+    background: transparent; border: 1px solid #444; color: #aaa;
+    border-radius: 4px; padding: 3px 8px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-edit-pass:hover { border-color: var(--yellow); color: var(--yellow); }
+  .btn-save-pass {
+    background: var(--yellow); border: none; color: #111;
+    border-radius: 4px; padding: 5px 10px; font-size: 0.78rem; font-weight: 700; cursor: pointer;
+  }
+  .btn-cancel-pass {
+    background: transparent; border: 1px solid #444; color: #888;
+    border-radius: 4px; padding: 5px 8px; font-size: 0.78rem; cursor: pointer;
+  }
   .add-user-form { display: flex; flex-direction: column; gap: 10px; }
   .add-user-form .row2 { display: flex; gap: 10px; }
   .btn-save-user {
@@ -459,8 +472,30 @@
   }
   .btn-close-admin:hover { border-color: #888; color: #ccc; }
 
+  /* Select de usuario en login */
+  #loginUser {
+    width: 100%;
+    padding: 10px 12px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #fff;
+    font-family: 'Barlow', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23888' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+  }
+  #loginUser:focus { border-color: var(--yellow); }
+  #loginUser option { background: #1a1a1a; color: #fff; }
+
   /* Igualar input password al input text en login */
-  #loginPass {
+  #loginPass, #newPassword {
     width: 100%;
     padding: 10px 12px;
     background: #111;
@@ -475,8 +510,8 @@
     appearance: none;
     box-sizing: border-box;
   }
-  #loginPass:focus { border-color: var(--yellow); }
-  #loginPass::placeholder { color: #555; font-family: 'Barlow', sans-serif; font-size: 1rem; }
+  #loginPass:focus, #newPassword:focus { border-color: var(--yellow); }
+  #loginPass::placeholder, #newPassword::placeholder { color: #555; font-family: 'Barlow', sans-serif; font-size: 1rem; }
 
   @media print { #loginScreen, #topbar, #adminPanel { display: none !important; } }
 </style>
@@ -490,7 +525,9 @@
     <p>SISTEMA DE ETIQUETAS · ACCESO</p>
     <div class="field">
       <label>Usuario</label>
-      <input type="text" id="loginUser" placeholder="Ingresa tu usuario" autocomplete="username">
+      <select id="loginUser">
+        <option value="" disabled selected>Selecciona tu usuario...</option>
+      </select>
     </div>
     <div class="field">
       <label>Contraseña</label>
@@ -845,7 +882,7 @@
 
   // ===== FIREBASE CONFIG =====
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDBakpz_zvbKJzB3TcL1gnB-zFFLdIpEG4",
@@ -874,10 +911,35 @@
     return s ? JSON.parse(s) : null;
   }
 
+  // Cargar usuarios en el select del login
+  async function cargarUsuariosLogin() {
+    const select = document.getElementById('loginUser');
+    select.innerHTML = '<option value="" disabled selected>Selecciona tu usuario...</option>';
+    try {
+      const snap = await getDocs(usuariosCol);
+      snap.docs.forEach(docSnap => {
+        const u = docSnap.data();
+        const opt = document.createElement('option');
+        opt.value = u.username;
+        opt.textContent = u.username.charAt(0).toUpperCase() + u.username.slice(1);
+        select.appendChild(opt);
+      });
+    } catch(e) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = 'Error al cargar usuarios';
+      opt.disabled = true;
+      select.appendChild(opt);
+    }
+  }
+
   async function doLogin() {
     const username = document.getElementById('loginUser').value.trim().toLowerCase();
     const password = document.getElementById('loginPass').value;
     const errEl = document.getElementById('loginError');
+
+    if (!username) { errEl.style.color='var(--accent)'; errEl.textContent = 'Selecciona un usuario.'; return; }
+
     errEl.style.color = '#888';
     errEl.textContent = 'Verificando...';
 
@@ -916,7 +978,7 @@
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('topbar').style.display = 'none';
     document.getElementById('btnAdminPanel').style.display = 'none';
-    document.getElementById('loginUser').value = '';
+    document.getElementById('loginUser').selectedIndex = 0;
     document.getElementById('loginPass').value = '';
     document.getElementById('loginError').textContent = '';
   }
@@ -943,19 +1005,63 @@
       snap.docs.forEach(docSnap => {
         const u = docSnap.data();
         const li = document.createElement('li');
+        li.style.flexDirection = 'column';
+        li.style.alignItems = 'stretch';
+        li.style.gap = '8px';
         li.innerHTML = `
-          <div class="u-info">
-            <span class="u-name">${u.username}</span>
-            <span class="u-role ${u.role}">${u.role}</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="u-info">
+              <span class="u-name">${u.username}</span>
+              <span class="u-role ${u.role}">${u.role}</span>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <button class="btn-edit-pass" onclick="toggleCambiarPass('${docSnap.id}', '${u.username}')">🔑 Contraseña</button>
+              ${u.username !== session?.username
+                ? `<button class="btn-del-user" onclick="eliminarUsuario('${docSnap.id}', '${u.username}')">Eliminar</button>`
+                : '<span style="color:#555;font-size:0.75rem">(tú)</span>'}
+            </div>
           </div>
-          ${u.username !== session?.username
-            ? `<button class="btn-del-user" onclick="eliminarUsuario('${docSnap.id}', '${u.username}')">Eliminar</button>`
-            : '<span style="color:#555;font-size:0.75rem">(tú)</span>'}
+          <div id="passForm_${docSnap.id}" style="display:none;gap:6px;align-items:center;">
+            <input type="password" id="passInput_${docSnap.id}" placeholder="Nueva contraseña" style="flex:1;padding:7px 10px;background:#0a0a0a;border:1px solid #333;border-radius:5px;color:#fff;font-family:'Barlow',sans-serif;font-size:0.9rem;outline:none;">
+            <button class="btn-save-pass" onclick="cambiarPassword('${docSnap.id}', '${u.username}')">Guardar</button>
+            <button class="btn-cancel-pass" onclick="toggleCambiarPass('${docSnap.id}', '${u.username}')">✕</button>
+          </div>
+          <div id="passMsg_${docSnap.id}" style="font-size:0.78rem;min-height:14px;"></div>
         `;
         list.appendChild(li);
       });
     } catch(e) {
       list.innerHTML = '<li style="color:var(--accent);font-size:0.85rem;padding:8px">Error al cargar usuarios.</li>';
+    }
+  }
+
+  function toggleCambiarPass(docId, username) {
+    const form = document.getElementById(`passForm_${docId}`);
+    const isVisible = form.style.display === 'flex';
+    form.style.display = isVisible ? 'none' : 'flex';
+    if (!isVisible) document.getElementById(`passInput_${docId}`).focus();
+  }
+
+  async function cambiarPassword(docId, username) {
+    const input = document.getElementById(`passInput_${docId}`);
+    const msgEl = document.getElementById(`passMsg_${docId}`);
+    const newPass = input.value.trim();
+
+    if (newPass.length < 4) {
+      msgEl.style.color = 'var(--accent)';
+      msgEl.textContent = 'La contraseña debe tener al menos 4 caracteres.';
+      return;
+    }
+    try {
+      await updateDoc(doc(db, 'usuarios', docId), { password: newPass });
+      msgEl.style.color = '#4caf50';
+      msgEl.textContent = `Contraseña de "${username}" actualizada.`;
+      input.value = '';
+      document.getElementById(`passForm_${docId}`).style.display = 'none';
+      setTimeout(() => { msgEl.textContent = ''; }, 2500);
+    } catch(e) {
+      msgEl.style.color = 'var(--accent)';
+      msgEl.textContent = 'Error al actualizar contraseña.';
     }
   }
 
@@ -980,6 +1086,7 @@
       document.getElementById('newUsername').value = '';
       document.getElementById('newPassword').value = '';
       renderUserList();
+      cargarUsuariosLogin();
       setTimeout(() => { errEl.textContent = ''; }, 2500);
     } catch(e) {
       errEl.style.color='var(--accent)';
@@ -992,6 +1099,7 @@
     try {
       await deleteDoc(doc(db, 'usuarios', docId));
       renderUserList();
+      cargarUsuariosLogin();
     } catch(e) {
       alert('Error al eliminar usuario.');
     }
@@ -1000,6 +1108,7 @@
   // Al cargar: verificar sesión activa e inicializar admin
   window.addEventListener('load', async () => {
     await initAdmin();
+    await cargarUsuariosLogin();
     const session = getSession();
     if (session) iniciarSesion(session);
   });
@@ -1016,6 +1125,8 @@
   });
 
   // Exponer funciones al scope global para los onclick del HTML
+  window.cambiarPassword = cambiarPassword;
+  window.toggleCambiarPass = toggleCambiarPass;
   window.doLogin = doLogin;
   window.doLogout = doLogout;
   window.abrirAdmin = abrirAdmin;
