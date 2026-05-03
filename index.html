@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Luna de Perla - Creador de Etiquetas</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&display=swap');
 
@@ -661,8 +662,13 @@
 
     <h3>⬆ Carga Masiva</h3>
     <div style="background:#111;border:1px solid #333;border-radius:8px;padding:14px;font-size:0.85rem;color:#aaa;margin-bottom:10px;">
-      Reemplaza todos los productos con la lista predefinida de <strong style="color:var(--yellow)">338 productos</strong> (marca: Bodega).
+      Sube un archivo <strong style="color:var(--yellow)">.xlsx</strong> con una columna llamada <strong style="color:var(--yellow)">Producto</strong>. Reemplazará todos los productos actuales.
     </div>
+    <div class="field">
+      <label>Seleccionar archivo Excel</label>
+      <input type="file" id="excelFile" accept=".xlsx" style="width:100%;padding:8px 12px;background:#111;border:1px solid #333;border-radius:6px;color:#ccc;font-family:'Barlow',sans-serif;font-size:0.9rem;cursor:pointer;">
+    </div>
+    <div id="excelPreview" style="font-size:0.8rem;color:#666;margin-bottom:8px;min-height:16px;"></div>
     <button class="btn-save-product" id="btnCargaMasiva" onclick="cargaMasiva()" style="background:#333;color:var(--yellow);border:2px solid var(--yellow);">⬆ CARGAR LISTA COMPLETA</button>
     <div id="cargaLog" style="margin-top:10px;font-size:0.8rem;min-height:16px;"></div>
 
@@ -1208,31 +1214,75 @@
 
 
   // ===== CARGA MASIVA =====
-  const LISTA_PRODUCTOS = [{"nombre": "Acido Pelucon 8un", "marca": "Bodega"}, {"nombre": "Alfajor Premiun Blanco 12un", "marca": "Bodega"}, {"nombre": "Alfombra 1un", "marca": "Bodega"}, {"nombre": "Aloe Vera Coco 10un", "marca": "Bodega"}, {"nombre": "Antiestres frutilla 12un", "marca": "Bodega"}, {"nombre": "Antiestres Hamburguesa 12un", "marca": "Bodega"}, {"nombre": "Antiestres kuromi 12un", "marca": "Bodega"}, {"nombre": "Antiestres raton queso 24un", "marca": "Bodega"}, {"nombre": "Arroz Miraflores G1 1kg 5un", "marca": "Bodega"}, {"nombre": "Balde Dulces calabazas 6un", "marca": "Bodega"}, {"nombre": "Balde Rojo Hallowen 6un", "marca": "Bodega"}, {"nombre": "Baldes halloween surtidos 6un", "marca": "Bodega"}, {"nombre": "Baldes Surtidos Pequenos 6un", "marca": "Bodega"}, {"nombre": "Bandeja Alfajor Classic 18un", "marca": "Bodega"}, {"nombre": "Bandeja Alfajor Premium 12un", "marca": "Bodega"}, {"nombre": "Bandeja Dia Mama 1un", "marca": "Bodega"}, {"nombre": "Bandeja Mediana 1un", "marca": "Bodega"}, {"nombre": "Barra Masticable morado 40un", "marca": "Bodega"}, {"nombre": "Barra Masticable rojo 40un", "marca": "Bodega"}, {"nombre": "Bastones caramelos acidos 24un", "marca": "Bodega"}, {"nombre": "Bastones Navidad 6un", "marca": "Bodega"}, {"nombre": "Bebida Protein Berries 6un", "marca": "Bodega"}, {"nombre": "Berbau Mix 250aprox", "marca": "Bodega"}, {"nombre": "Boca Loca 24un", "marca": "Bodega"}, {"nombre": "Bolsa Calabaza 6un", "marca": "Bodega"}, {"nombre": "Bomba Lollipop 24un", "marca": "Bodega"}, {"nombre": "Bombonera Bon Bon Bum 100un", "marca": "Bodega"}, {"nombre": "Bombones Alpines 100un", "marca": "Bodega"}, {"nombre": "Bombones Lexus Pote 107un", "marca": "Bodega"}, {"nombre": "Bombones Nutball 100un", "marca": "Bodega"}, {"nombre": "Bombones reutter surtidos 150 gr 3un", "marca": "Bodega"}, {"nombre": "Bombones Tubo Flor 6un", "marca": "Bodega"}, {"nombre": "Bon bon Bum Cereza 24un", "marca": "Bodega"}, {"nombre": "Bon bon Bum Fresa 24un", "marca": "Bodega"}, {"nombre": "Bon bon Bum Maracuya 24un", "marca": "Bodega"}, {"nombre": "Bon bon bum Mistery 24un", "marca": "Bodega"}, {"nombre": "Bon bon Bum Sandia 24un", "marca": "Bodega"}, {"nombre": "Bon bon Bum Surtido 24un", "marca": "Bodega"}, {"nombre": "Bon bon Bum Tropical 24un", "marca": "Bodega"}, {"nombre": "Bon bon Bum Uva Fresa 24un", "marca": "Bodega"}, {"nombre": "Bota magica caramelos + gorro 12un", "marca": "Bodega"}, {"nombre": "Botella pistola hidrogel 5un", "marca": "Bodega"}, {"nombre": "Bowlings gigante Chicle 24un", "marca": "Bodega"}, {"nombre": "Busters Arandano 24un", "marca": "Bodega"}, {"nombre": "Busters Manzana 24un", "marca": "Bodega"}, {"nombre": "Cachantun con gas 500ml 12un", "marca": "Bodega"}, {"nombre": "Cachantun s/n 500ml 12un", "marca": "Bodega"}, {"nombre": "Cachantun Strong Gas 500ml 12un", "marca": "Bodega"}, {"nombre": "Calcetas de nina Gris 12un", "marca": "Bodega"}, {"nombre": "Calcetas de niña modelo Limonada 12un", "marca": "Bodega"}, {"nombre": "Camion Tolva 1un", "marca": "Bodega"}, {"nombre": "Canasta de colores pequeño 1un", "marca": "Bodega"}, {"nombre": "Candy Cooler 24un", "marca": "Bodega"}, {"nombre": "Candy Drop Gel Acido 12un", "marca": "Bodega"}, {"nombre": "Candy Mix 900gr", "marca": "Bodega"}, {"nombre": "Candy MIx Fruna 1un", "marca": "Bodega"}, {"nombre": "Candy Spray Barbie 15un", "marca": "Bodega"}, {"nombre": "Capy bara arena 12un", "marca": "Bodega"}, {"nombre": "Carioca Bandeja 8un", "marca": "Bodega"}, {"nombre": "Cartas Brainrot 36un", "marca": "Bodega"}, {"nombre": "Cartas Dragon Ball 32un", "marca": "Bodega"}, {"nombre": "Cartas Futbol 36un", "marca": "Bodega"}, {"nombre": "Cartas Lilo Stitch 36un", "marca": "Bodega"}, {"nombre": "Cartas Mario Bros 32un", "marca": "Bodega"}, {"nombre": "Cartas Pokemon 36un", "marca": "Bodega"}, {"nombre": "Cartas Zootopia 36un", "marca": "Bodega"}, {"nombre": "Casa mix caramelos 15un", "marca": "Bodega"}, {"nombre": "CerealBar Chips 20un", "marca": "Bodega"}, {"nombre": "CerealBar Frutas 20un", "marca": "Bodega"}, {"nombre": "CerealBar Yogurt 20un", "marca": "Bodega"}, {"nombre": "Chicle Cereza 15un", "marca": "Bodega"}, {"nombre": "Chicle Hierba Buena 15un", "marca": "Bodega"}, {"nombre": "Chicle Kilometrico 12un", "marca": "Bodega"}, {"nombre": "Chicle Menta 15un", "marca": "Bodega"}, {"nombre": "Chicoco 20un", "marca": "Bodega"}, {"nombre": "Chirlito choco 20un", "marca": "Bodega"}, {"nombre": "Chirlito frutilla 20un", "marca": "Bodega"}, {"nombre": "Chirlito mora 20un", "marca": "Bodega"}, {"nombre": "Chocman 32un", "marca": "Bodega"}, {"nombre": "Chocmelos 2un", "marca": "Bodega"}, {"nombre": "Chocolaton 5un", "marca": "Bodega"}, {"nombre": "Chupete Bowling Yogurt 24un", "marca": "Bodega"}, {"nombre": "Chupete Bowlings gigante 24un", "marca": "Bodega"}, {"nombre": "Chupeton 24un", "marca": "Bodega"}, {"nombre": "Colombinetas Choco 24un", "marca": "Bodega"}, {"nombre": "Coneja Coni Patas Largas 1un", "marca": "Bodega"}, {"nombre": "Coneja Vale con Flor 1un", "marca": "Bodega"}, {"nombre": "Conejo Anastasio peluche 1un", "marca": "Bodega"}, {"nombre": "Conejo Basti Patas Largas 1un", "marca": "Bodega"}, {"nombre": "Cono Zanahoria 6un", "marca": "Bodega"}, {"nombre": "Conos Con Crema De Avellana 12un", "marca": "Bodega"}, {"nombre": "Cool Watch 6un", "marca": "Bodega"}, {"nombre": "Costa Rama 5un", "marca": "Bodega"}, {"nombre": "Crecencio Tiras 10un", "marca": "Bodega"}, {"nombre": "Cubanito 20un", "marca": "Bodega"}, {"nombre": "Cubanito Doble 20un", "marca": "Bodega"}, {"nombre": "Cubanito Doble Frutilla 20un", "marca": "Bodega"}, {"nombre": "Cubanito Doble Menta 20un", "marca": "Bodega"}, {"nombre": "Cubo Gigante 1un", "marca": "Bodega"}, {"nombre": "Don cepillo 24un", "marca": "Bodega"}, {"nombre": "Dona 24un", "marca": "Bodega"}, {"nombre": "Donuts Blanco 10un", "marca": "Bodega"}, {"nombre": "Donuts Chocolate 10un", "marca": "Bodega"}, {"nombre": "Donuts Coco 10un", "marca": "Bodega"}, {"nombre": "Dubai Rosso 24un", "marca": "Bodega"}, {"nombre": "Dulce roll on 24un", "marca": "Bodega"}, {"nombre": "Encen Electrolite 15un", "marca": "Bodega"}, {"nombre": "Encen Peque 12un", "marca": "Bodega"}, {"nombre": "Encen Piedra Motivos 20un", "marca": "Bodega"}, {"nombre": "Espirales 400 grs 5un", "marca": "Bodega"}, {"nombre": "Fiesta Mix 1un", "marca": "Bodega"}, {"nombre": "Full Mani Chocolate 5un", "marca": "Bodega"}, {"nombre": "Galleta Brownie Chips 10un", "marca": "Bodega"}, {"nombre": "Galleta Carioca 32un", "marca": "Bodega"}, {"nombre": "Galleta Choco Chips 10un", "marca": "Bodega"}, {"nombre": "Galleta Chocolate 10un", "marca": "Bodega"}, {"nombre": "Galleta Coco 10un", "marca": "Bodega"}, {"nombre": "Galleta Cocochip 32un", "marca": "Bodega"}, {"nombre": "Galleta Gretel Blanco 10un", "marca": "Bodega"}, {"nombre": "Galleta Gretel Chocolate 10un", "marca": "Bodega"}, {"nombre": "Galleta Gretel Frutilla 10un", "marca": "Bodega"}, {"nombre": "Galleta Gretel Pie De Limon 10un", "marca": "Bodega"}, {"nombre": "Galleta Limon 10un", "marca": "Bodega"}, {"nombre": "Galleta Mantequilla 10un", "marca": "Bodega"}, {"nombre": "Galleta Serranita 32un", "marca": "Bodega"}, {"nombre": "Galleta Vino 10un", "marca": "Bodega"}, {"nombre": "Galletas Surtido Mix 8un", "marca": "Bodega"}, {"nombre": "Gomaton 500gr 1un", "marca": "Bodega"}, {"nombre": "Gomita Ambrosito 20un", "marca": "Bodega"}, {"nombre": "Gomitas Amberries 20un", "marca": "Bodega"}, {"nombre": "Gomitas eucaliptus 20un", "marca": "Bodega"}, {"nombre": "Gomitas Flipy 20un", "marca": "Bodega"}, {"nombre": "Gomitas Frutilla Crema 20un", "marca": "Bodega"}, {"nombre": "Gomitas Lagartijas 30un", "marca": "Bodega"}, {"nombre": "Gomitas Loop 20un", "marca": "Bodega"}, {"nombre": "Gomitas Sandia 20un", "marca": "Bodega"}, {"nombre": "Gomtas Candy Sushi 20un", "marca": "Bodega"}, {"nombre": "Gomutcho surtidos 30un", "marca": "Bodega"}, {"nombre": "Gomutcho yogurt 30un", "marca": "Bodega"}, {"nombre": "Gorila Gigante 3un", "marca": "Bodega"}, {"nombre": "Gorila Grande 8un", "marca": "Bodega"}, {"nombre": "Gorro pascuero escarcha 12un", "marca": "Bodega"}, {"nombre": "Gorro pascuero Feliz Navidad 12un", "marca": "Bodega"}, {"nombre": "Gorro pascuero liso brillante 12un", "marca": "Bodega"}, {"nombre": "Gorro pascuero Reno corbata 12un", "marca": "Bodega"}, {"nombre": "Gummy Fries 12un", "marca": "Bodega"}, {"nombre": "Gunys Acid Dips 8un", "marca": "Bodega"}, {"nombre": "Gunys Acid Muecas 8un", "marca": "Bodega"}, {"nombre": "Gunys Acid Noodle 8un", "marca": "Bodega"}, {"nombre": "Hearts For You Corazon 120grs 3un", "marca": "Bodega"}, {"nombre": "Hearts For You Corazon 50grs 4un", "marca": "Bodega"}, {"nombre": "Hearts For You estuche 40grs 6un", "marca": "Bodega"}, {"nombre": "Huevo Cachorros 8un", "marca": "Bodega"}, {"nombre": "Huevo Jurassic 8un", "marca": "Bodega"}, {"nombre": "Huevo Muneca Sorpresa 8un", "marca": "Bodega"}, {"nombre": "Huevos de Chocolate mabu 3un", "marca": "Bodega"}, {"nombre": "Huevos Macizos fruna bandeja 6un", "marca": "Bodega"}, {"nombre": "Jalea Capibara 100un", "marca": "Bodega"}, {"nombre": "Jalea Chanchito 100un", "marca": "Bodega"}, {"nombre": "Jalea Conito 20un", "marca": "Bodega"}, {"nombre": "Jalea Gallina 100un", "marca": "Bodega"}, {"nombre": "Jalea Tigre 100un", "marca": "Bodega"}, {"nombre": "Kilatte 20un", "marca": "Bodega"}, {"nombre": "Kilombo 20un", "marca": "Bodega"}, {"nombre": "Krapulito 50un", "marca": "Bodega"}, {"nombre": "Luces Navidad 100 led 1un", "marca": "Bodega"}, {"nombre": "Luces Navidad Ampolleta 1un", "marca": "Bodega"}, {"nombre": "Luces Navidad Estrellas 1un", "marca": "Bodega"}, {"nombre": "Luces Navidad Pinas 1un", "marca": "Bodega"}, {"nombre": "Mabu xplota 24un", "marca": "Bodega"}, {"nombre": "Malva Choc Calaf 850gr 1un", "marca": "Bodega"}, {"nombre": "Mantecol 111gr 6un", "marca": "Bodega"}, {"nombre": "Mantecol 253gr 6un", "marca": "Bodega"}, {"nombre": "Mantecol 41gr 12un", "marca": "Bodega"}, {"nombre": "Mantecol Marmolado 111gr 6un", "marca": "Bodega"}, {"nombre": "Marshmallow Osito 12un", "marca": "Bodega"}, {"nombre": "Masas gigantes paquete 6un", "marca": "Bodega"}, {"nombre": "Max Combi 100un", "marca": "Bodega"}, {"nombre": "Max Surtido 300un", "marca": "Bodega"}, {"nombre": "Max Wafer Chocolate 12un", "marca": "Bodega"}, {"nombre": "Max Wafer Fresa 12un", "marca": "Bodega"}, {"nombre": "Mini bebida Frucola 12un", "marca": "Bodega"}, {"nombre": "Mini bebida Frutal 12un", "marca": "Bodega"}, {"nombre": "Mini bebida Limon 12un", "marca": "Bodega"}, {"nombre": "Mini bebida Naranja 12un", "marca": "Bodega"}, {"nombre": "Mini bebida Papaya 12un", "marca": "Bodega"}, {"nombre": "Mini bebida Pina 12un", "marca": "Bodega"}, {"nombre": "Mini Burger 36un", "marca": "Bodega"}, {"nombre": "Mini Hot dog 36un", "marca": "Bodega"}, {"nombre": "Mini Jaleas Repuesto 50un", "marca": "Bodega"}, {"nombre": "Monedas Chocolate 50un", "marca": "Bodega"}, {"nombre": "Munchy Choco Chips 16un", "marca": "Bodega"}, {"nombre": "Munchy Choco Mani 16un", "marca": "Bodega"}, {"nombre": "My Baston Navideño 12un", "marca": "Bodega"}, {"nombre": "Naipe Espanol 12un", "marca": "Bodega"}, {"nombre": "Naipe Ingles 6un", "marca": "Bodega"}, {"nombre": "Nonitas 20un", "marca": "Bodega"}, {"nombre": "Oblea Waffer Chocolate 10un", "marca": "Bodega"}, {"nombre": "Oblea Waffer Vainilla 10un", "marca": "Bodega"}, {"nombre": "Obsesion 10un", "marca": "Bodega"}, {"nombre": "Orly Berries 5un", "marca": "Bodega"}, {"nombre": "Orly Chirimoya 5un", "marca": "Bodega"}, {"nombre": "Orly Frambuesa 5un", "marca": "Bodega"}, {"nombre": "Orly Frutilla 5un", "marca": "Bodega"}, {"nombre": "Orly Menta 5un", "marca": "Bodega"}, {"nombre": "Orly Naranja 5un", "marca": "Bodega"}, {"nombre": "Orly Trufa 5un", "marca": "Bodega"}, {"nombre": "Paleta Caramelo Blue XL 12un", "marca": "Bodega"}, {"nombre": "Paleta Caramelo XL Nocturna 12un", "marca": "Bodega"}, {"nombre": "Paleta Mix Halloween 40un", "marca": "Bodega"}, {"nombre": "Paleta Multicolor XL 12un", "marca": "Bodega"}, {"nombre": "Paleta Terrolito Esqueleto 24un", "marca": "Bodega"}, {"nombre": "Palo loco frutilla 30un", "marca": "Bodega"}, {"nombre": "Panchito 20un", "marca": "Bodega"}, {"nombre": "Papel Ronson + Tips 24un", "marca": "Bodega"}, {"nombre": "Papel Ronson Extra 25un", "marca": "Bodega"}, {"nombre": "Paraguita de Chocolate 24un", "marca": "Bodega"}, {"nombre": "Pastillas Cereza 12un", "marca": "Bodega"}, {"nombre": "Pastillas Citrus 12un", "marca": "Bodega"}, {"nombre": "Pastillas Eucalipto 12un", "marca": "Bodega"}, {"nombre": "Pastillas Extra Fuerte 12un", "marca": "Bodega"}, {"nombre": "Pastillas Melon 12un", "marca": "Bodega"}, {"nombre": "Pastillas Menta 12un", "marca": "Bodega"}, {"nombre": "Pastillas Miel Menthol 12un", "marca": "Bodega"}, {"nombre": "Pastillas Sandia 12un", "marca": "Bodega"}, {"nombre": "Pastillas Vit C Miel 12un", "marca": "Bodega"}, {"nombre": "Patita brillante 12un", "marca": "Bodega"}, {"nombre": "Patita transparente 12un", "marca": "Bodega"}, {"nombre": "Patita xplot 24un", "marca": "Bodega"}, {"nombre": "Peeled sabor durazno 24un", "marca": "Bodega"}, {"nombre": "Peeled sabor mango 24un", "marca": "Bodega"}, {"nombre": "Peeled sabor manzana 24un", "marca": "Bodega"}, {"nombre": "Peeled sabor naranja 24un", "marca": "Bodega"}, {"nombre": "Peeled sabor pina 24un", "marca": "Bodega"}, {"nombre": "Peeled sabor uva 24un", "marca": "Bodega"}, {"nombre": "Pelotitas Saltarinas 50un", "marca": "Bodega"}, {"nombre": "Pinata Mix 1un", "marca": "Bodega"}, {"nombre": "Polvos Explosivos Sour 12un", "marca": "Bodega"}, {"nombre": "Pomarola Sachet 200 grs 6un", "marca": "Bodega"}, {"nombre": "Pote saur Granada 30un", "marca": "Bodega"}, {"nombre": "Pote Sour Botella 30un", "marca": "Bodega"}, {"nombre": "Pote Sour Frutilla 30un", "marca": "Bodega"}, {"nombre": "Pote Sour Lata Chicles 30un", "marca": "Bodega"}, {"nombre": "Ring Pop Liga Justicia 18un", "marca": "Bodega"}, {"nombre": "Rosa de Regalo 6un", "marca": "Bodega"}, {"nombre": "Sandia Ya 30un", "marca": "Bodega"}, {"nombre": "Sangre Dracula 12un", "marca": "Bodega"}, {"nombre": "Selva negra 20un", "marca": "Bodega"}, {"nombre": "Serranita Bandeja 8un", "marca": "Bodega"}, {"nombre": "Set utensilios de cocina 3un", "marca": "Bodega"}, {"nombre": "Slime chanchito 12un", "marca": "Bodega"}, {"nombre": "Slime con squishy 6un", "marca": "Bodega"}, {"nombre": "Slime dino 12un", "marca": "Bodega"}, {"nombre": "Slime Mario 12un", "marca": "Bodega"}, {"nombre": "Slime Mickey 12un", "marca": "Bodega"}, {"nombre": "Slime mundo 12un", "marca": "Bodega"}, {"nombre": "Slime muñeca 12un", "marca": "Bodega"}, {"nombre": "Slime patitos 24un", "marca": "Bodega"}, {"nombre": "Slime raton 12un", "marca": "Bodega"}, {"nombre": "Slime Stich 12un", "marca": "Bodega"}, {"nombre": "Slime Tubo brillante 6un", "marca": "Bodega"}, {"nombre": "Snow Mint 1un", "marca": "Bodega"}, {"nombre": "Sour Beast Baston 3un", "marca": "Bodega"}, {"nombre": "Sour Beast Duo bestial 9un", "marca": "Bodega"}, {"nombre": "Sour Beast la Bestia 12un", "marca": "Bodega"}, {"nombre": "Sour Beast Moco Bestia 21un", "marca": "Bodega"}, {"nombre": "Sour Beast Ojos Tenebrosos 30un", "marca": "Bodega"}, {"nombre": "Sour beast sudor bestia 9un", "marca": "Bodega"}, {"nombre": "Spaguetti 5 400 grs 5un", "marca": "Bodega"}, {"nombre": "Splot Acid 24un", "marca": "Bodega"}, {"nombre": "Squish hello Kitty 12un", "marca": "Bodega"}, {"nombre": "Squish patito 12un", "marca": "Bodega"}, {"nombre": "Squish unicornio 12un", "marca": "Bodega"}, {"nombre": "Squishy Corazon 12un", "marca": "Bodega"}, {"nombre": "Squishy galleta 12un", "marca": "Bodega"}, {"nombre": "Squishy labubu 12un", "marca": "Bodega"}, {"nombre": "Squishy osito 12un", "marca": "Bodega"}, {"nombre": "Suny Clasica Calaf 1kg 1un", "marca": "Bodega"}, {"nombre": "Super 8 24un", "marca": "Bodega"}, {"nombre": "Sustancias 20un", "marca": "Bodega"}, {"nombre": "Taba Conejo 12un", "marca": "Bodega"}, {"nombre": "Taba Dino colores 12un", "marca": "Bodega"}, {"nombre": "Taba pollito grande 12un", "marca": "Bodega"}, {"nombre": "Taba pollitos pequenos 12un", "marca": "Bodega"}, {"nombre": "Tableton 6un", "marca": "Bodega"}, {"nombre": "Tableton Individual 36un", "marca": "Bodega"}, {"nombre": "Tallarin 87 400 grs 5un", "marca": "Bodega"}, {"nombre": "Telas de Arana 6un", "marca": "Bodega"}, {"nombre": "Ternurin Baño Grande 1un", "marca": "Bodega"}, {"nombre": "Ternurin Carrusel Conejo 1un", "marca": "Bodega"}, {"nombre": "Ternurin Carrusel Oveja 1un", "marca": "Bodega"}, {"nombre": "Ternurin Coche Trillizos 1un", "marca": "Bodega"}, {"nombre": "Ternurin Cocina Grande 1un", "marca": "Bodega"}, {"nombre": "Ternurin colegio 1un", "marca": "Bodega"}, {"nombre": "Ternurin Dormitorio 1un", "marca": "Bodega"}, {"nombre": "Ternurin Dormitorio Grande 1un", "marca": "Bodega"}, {"nombre": "Ternurin Familia Conejo 1un", "marca": "Bodega"}, {"nombre": "Ternurin Familia Oso 1un", "marca": "Bodega"}, {"nombre": "Ternurin Habitacion Bebe 1un", "marca": "Bodega"}, {"nombre": "Ternurin happy birthday 1un", "marca": "Bodega"}, {"nombre": "Ternurin Panaderia 1un", "marca": "Bodega"}, {"nombre": "Ternurin Piano 1un", "marca": "Bodega"}, {"nombre": "Ternurin Tocador 1un", "marca": "Bodega"}, {"nombre": "Ternurin Trillizos 1un", "marca": "Bodega"}, {"nombre": "Tik Tok Copa del Mundo 100un", "marca": "Bodega"}, {"nombre": "Tobogan Marshmellow 20un", "marca": "Bodega"}, {"nombre": "Top Russ 40un", "marca": "Bodega"}, {"nombre": "Tortazo 20un", "marca": "Bodega"}, {"nombre": "Transformers 4un", "marca": "Bodega"}, {"nombre": "Trento Blanco Dark 16un", "marca": "Bodega"}, {"nombre": "Trento Caramelo 16un", "marca": "Bodega"}, {"nombre": "Trento Mousse Maracuya 16un", "marca": "Bodega"}, {"nombre": "Trento Torta de Limon 16un", "marca": "Bodega"}, {"nombre": "Trento Trufa 16un", "marca": "Bodega"}, {"nombre": "Valentte bombon 150g 4un", "marca": "Bodega"}, {"nombre": "Valentte bombon 200g 3un", "marca": "Bodega"}, {"nombre": "Verdeflor Hierbas Serranas 250gr 6un", "marca": "Bodega"}, {"nombre": "Verdeflor Hierbas Serranas 500gr 6un", "marca": "Bodega"}, {"nombre": "Verona blanco 104un", "marca": "Bodega"}, {"nombre": "Verona negro 104un", "marca": "Bodega"}, {"nombre": "Wild Fit Almendra 16un", "marca": "Bodega"}, {"nombre": "Wild Fit Avellana 16un", "marca": "Bodega"}, {"nombre": "Wild Fit Coco 16un", "marca": "Bodega"}, {"nombre": "Wild Fit Menta 16un", "marca": "Bodega"}, {"nombre": "Wild Protein Caramel 16un", "marca": "Bodega"}, {"nombre": "Wild Protein Choco + Mani 16un", "marca": "Bodega"}, {"nombre": "Wild Protein Choco Coco 16un", "marca": "Bodega"}, {"nombre": "Wild Protein Chocolate 16un", "marca": "Bodega"}, {"nombre": "Wild Protein Lemon Pie 16un", "marca": "Bodega"}, {"nombre": "Wild Protein Mix 1un", "marca": "Bodega"}, {"nombre": "Wild Protein Vegan Mokka 16un", "marca": "Bodega"}, {"nombre": "Wild Protein Vegan Naranja Bitter 16un", "marca": "Bodega"}, {"nombre": "Wild ShakeGo Cafe 6un", "marca": "Bodega"}, {"nombre": "Wild ShakeGo Vainilla 6un", "marca": "Bodega"}, {"nombre": "Winergy Barra Mani 12un", "marca": "Bodega"}, {"nombre": "Yerba Mate Completo 6un", "marca": "Bodega"}, {"nombre": "Yerba Mate Stevia 6un", "marca": "Bodega"}, {"nombre": "Zanahoria de Huevitos fruna bandeja 12un", "marca": "Bodega"}];
+  async function leerExcel(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const XLSX = window.XLSX;
+          const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          const data = XLSX.utils.sheet_to_json(ws);
+          // Buscar columna Producto (case-insensitive)
+          const col = Object.keys(data[0] || {}).find(k => k.trim().toLowerCase() === 'producto');
+          if (!col) { reject('No se encontró la columna "Producto" en el archivo.'); return; }
+          const productos = data
+            .map(row => ({ nombre: String(row[col]).trim(), marca: 'Bodega' }))
+            .filter(p => p.nombre && p.nombre !== 'undefined');
+          resolve(productos);
+        } catch(err) { reject('Error al leer el archivo: ' + err.message); }
+      };
+      reader.onerror = () => reject('No se pudo leer el archivo.');
+      reader.readAsArrayBuffer(file);
+    });
+  }
 
   async function cargaMasiva() {
-    if (!confirm('¿Reemplazar TODOS los productos actuales con la lista de ' + LISTA_PRODUCTOS.length + ' productos? Esta acción no se puede deshacer.')) return;
-    const btn = document.getElementById('btnCargaMasiva');
+    const fileInput = document.getElementById('excelFile');
     const logEl = document.getElementById('cargaLog');
+    const btn = document.getElementById('btnCargaMasiva');
+
+    if (!fileInput.files || !fileInput.files[0]) {
+      logEl.style.color = '#e63946';
+      logEl.textContent = '⚠️ Selecciona un archivo Excel primero.';
+      return;
+    }
+
+    let productos;
+    try {
+      logEl.style.color = '#aaa';
+      logEl.textContent = 'Leyendo archivo...';
+      productos = await leerExcel(fileInput.files[0]);
+    } catch(e) {
+      logEl.style.color = '#e63946';
+      logEl.textContent = '❌ ' + e;
+      return;
+    }
+
+    if (!confirm('¿Reemplazar TODOS los productos actuales con ' + productos.length + ' productos del archivo? Esta acción no se puede deshacer.')) return;
+
     btn.disabled = true;
     btn.textContent = 'Procesando...';
-    logEl.style.color = '#aaa';
-    logEl.textContent = 'Eliminando productos existentes...';
     try {
+      logEl.style.color = '#aaa';
+      logEl.textContent = 'Eliminando productos existentes...';
       const snap = await getDocs(productosCol);
       for (const d of snap.docs) {
         await deleteDoc(doc(db, 'productos', d.id));
       }
-      logEl.textContent = 'Subiendo ' + LISTA_PRODUCTOS.length + ' productos...';
+      logEl.textContent = 'Subiendo ' + productos.length + ' productos...';
       let count = 0;
-      for (const p of LISTA_PRODUCTOS) {
+      for (const p of productos) {
         await addDoc(productosCol, p);
         count++;
-        if (count % 50 === 0) logEl.textContent = count + '/' + LISTA_PRODUCTOS.length + ' subidos...';
+        if (count % 50 === 0) logEl.textContent = count + '/' + productos.length + ' subidos...';
       }
       logEl.style.color = '#4caf50';
       logEl.textContent = '✅ ' + count + ' productos cargados correctamente.';
       btn.textContent = '✅ COMPLETADO';
+      btn.disabled = false;
+      fileInput.value = '';
+      document.getElementById('excelPreview').textContent = '';
       await renderProductList();
       await cargarProductos();
     } catch(e) {
@@ -1366,6 +1416,26 @@
       if (!e.target.closest('.autocomplete-wrap')) list.classList.remove('open');
     });
   }
+
+  // Preview del archivo Excel seleccionado
+  document.getElementById('excelFile')?.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    const preview = document.getElementById('excelPreview');
+    const logEl = document.getElementById('cargaLog');
+    const btn = document.getElementById('btnCargaMasiva');
+    if (!file) { preview.textContent = ''; return; }
+    try {
+      const productos = await leerExcel(file);
+      preview.style.color = '#4caf50';
+      preview.textContent = `✅ ${productos.length} productos encontrados en "${file.name}"`;
+      logEl.textContent = '';
+      btn.textContent = '⬆ CARGAR LISTA COMPLETA';
+      btn.disabled = false;
+    } catch(e) {
+      preview.style.color = '#e63946';
+      preview.textContent = '❌ ' + e;
+    }
+  });
 
   // Al cargar: verificar sesión activa e inicializar
   window.addEventListener('load', async () => {
