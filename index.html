@@ -1090,7 +1090,13 @@
     }
   }
 
-  function iniciarSesion(user) {
+  function limpiarFormulario() {
+    document.getElementById('savedList').innerHTML = '';
+    document.getElementById('nombre').value = '';
+    document.getElementById('precio').value = '';
+    document.getElementById('liveLabel').innerHTML = '';
+    renderLive();
+  }
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('topbar').style.display = 'flex';
     document.getElementById('tbUser').textContent = user.username;
@@ -1103,6 +1109,7 @@
     }
     // Limpiar etiquetas al iniciar sesión
     document.getElementById('savedList').innerHTML = '';
+    limpiarFormulario();
   }
 
   function doLogout() {
@@ -1116,6 +1123,7 @@
     document.getElementById('loginError').textContent = '';
     // Limpiar etiquetas agregadas
     document.getElementById('savedList').innerHTML = '';
+    limpiarFormulario();
   }
 
   function abrirAdmin() {
