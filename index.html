@@ -424,7 +424,72 @@
   .btn-tb:hover { border-color: var(--yellow); color: var(--yellow); }
   .btn-tb.danger:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* ===== PANEL ADMIN ===== */
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 600px) {
+
+    body { padding: 10px 10px 40px; }
+
+    /* Header */
+    header h1 { font-size: 1.6rem; letter-spacing: 2px; }
+
+    /* Topbar */
+    #topbar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    #topbar .tb-left { justify-content: center; }
+    #topbar .tb-right {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .btn-tb {
+      font-size: 0.75rem;
+      padding: 8px 6px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* Layout */
+    .layout { flex-direction: column; gap: 16px; }
+    .controls { width: 100%; }
+    .preview-area { min-width: unset; width: 100%; }
+
+    /* Preview canvas */
+    .preview-canvas { padding: 16px; gap: 12px; min-height: 120px; }
+
+    /* Etiqueta en pantalla — escalar para móvil */
+    .etiqueta { width: 100%; max-width: 302px; }
+
+    /* Botones imprimir */
+    .btn-print, .btn-thermal {
+      font-size: 1rem;
+      padding: 12px;
+    }
+
+    /* Toggle buttons */
+    .toggle-group { gap: 6px; }
+    .toggle-btn { font-size: 0.78rem; padding: 7px 4px; }
+
+    /* Panels admin/productos */
+    .admin-box, .product-box {
+      padding: 20px 16px;
+      margin: 10px;
+      width: calc(100% - 20px);
+      max-height: 85vh;
+    }
+
+    /* Login box */
+    .login-box { padding: 28px 20px; margin: 0 12px; }
+
+    /* Saved list */
+    .saved-list { gap: 12px; }
+    .saved-item .etiqueta { width: 100%; max-width: 302px; }
+  }
+
   #adminPanel {
     display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
     z-index: 8000; align-items: center; justify-content: center;
