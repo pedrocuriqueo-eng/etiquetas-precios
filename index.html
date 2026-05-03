@@ -651,7 +651,9 @@
       </div>
       <div class="field">
         <label>Marca</label>
-        <input type="text" id="newProductMarca" placeholder="ej: Tucapel">
+        <div style="padding: 10px 12px; background:#111; border:1px solid #333; border-radius:6px; color:var(--yellow); font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:2px;">
+          Bodega
+        </div>
       </div>
       <button class="btn-save-product" onclick="agregarProducto()">＋ AGREGAR PRODUCTO</button>
       <div class="login-error" id="productError"></div>
@@ -1248,9 +1250,9 @@
 
   async function agregarProducto() {
     const nombre = document.getElementById('newProductNombre').value.trim();
-    const marca = document.getElementById('newProductMarca').value.trim();
+    const marca = 'Bodega';
     const errEl = document.getElementById('productError');
-    if (!nombre || !marca) { errEl.style.color='var(--accent)'; errEl.textContent='Completa nombre y marca.'; return; }
+    if (!nombre) { errEl.style.color='var(--accent)'; errEl.textContent='Ingresa el nombre del producto.'; return; }
     try {
       await addDoc(productosCol, { nombre, marca });
       errEl.style.color = '#4caf50';
