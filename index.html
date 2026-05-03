@@ -1095,7 +1095,7 @@
   function iniciarSesion(user) {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('topbar').style.display = 'flex';
-    document.getElementById('tbUser').textContent = user.username;
+    document.getElementById('tbUser').textContent = user.username.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     const roleEl = document.getElementById('tbRole');
     roleEl.textContent = user.role.toUpperCase();
     roleEl.className = 'tb-role ' + user.role;
