@@ -1482,12 +1482,25 @@
 
   // Al cargar: verificar sesión activa e inicializar
   window.addEventListener('load', async () => {
-    await initAdmin();
+    // Cargar usuarios primero (independiente de initAdmin)
     await cargarUsuariosLogin();
+
+    // initAdmin en paralelo sin bloquear
+    initAdmin().catch(e => console.warn('initAdmin:', e));
+
     await cargarProductos();
     initAutocomplete();
+
     const session = getSession();
     if (session) iniciarSesion(session);
+  });
+
+  // Si el select se abre vacío, recargar automáticamente
+  document.getElementById('loginUser').addEventListener('focus', async () => {
+    const select = document.getElementById('loginUser');
+    if (select.options.length <= 1) {
+      await cargarUsuariosLogin();
+    }
   });
 
   // Enter en login
