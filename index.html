@@ -571,6 +571,8 @@
     font-family: 'Barlow', sans-serif; font-size: 0.9rem; cursor: pointer;
   }
   .btn-close-product:hover { border-color: #888; color: #ccc; }
+
+  #excelLabel:hover { border-color: var(--yellow); color: var(--yellow); }
 </style>
 </head>
 <body>
@@ -666,7 +668,11 @@
     </div>
     <div class="field">
       <label>Seleccionar archivo Excel</label>
-      <input type="file" id="excelFile" accept=".xlsx" style="width:100%;padding:8px 12px;background:#111;border:1px solid #333;border-radius:6px;color:#ccc;font-family:'Barlow',sans-serif;font-size:0.9rem;cursor:pointer;">
+      <label for="excelFile" id="excelLabel" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#111;border:1px dashed #444;border-radius:6px;cursor:pointer;transition:border-color 0.2s;color:#aaa;font-family:'Barlow',sans-serif;font-size:0.9rem;">
+        <span style="font-size:1.4rem;">📂</span>
+        <span id="excelFileName">Haz clic para seleccionar un archivo .xlsx</span>
+      </label>
+      <input type="file" id="excelFile" accept=".xlsx" style="display:none;">
     </div>
     <div id="excelPreview" style="font-size:0.8rem;color:#666;margin-bottom:8px;min-height:16px;"></div>
     <button class="btn-save-product" id="btnCargaMasiva" onclick="cargaMasiva()" style="background:#333;color:var(--yellow);border:2px solid var(--yellow);">⬆ CARGAR LISTA COMPLETA</button>
@@ -1423,17 +1429,24 @@
     const preview = document.getElementById('excelPreview');
     const logEl = document.getElementById('cargaLog');
     const btn = document.getElementById('btnCargaMasiva');
+    const label = document.getElementById('excelLabel');
+    const fileName = document.getElementById('excelFileName');
     if (!file) { preview.textContent = ''; return; }
+    fileName.textContent = file.name;
+    label.style.borderColor = '#aaa';
+    label.style.color = '#fff';
     try {
       const productos = await leerExcel(file);
       preview.style.color = '#4caf50';
-      preview.textContent = `✅ ${productos.length} productos encontrados en "${file.name}"`;
+      preview.textContent = `✅ ${productos.length} productos encontrados`;
+      label.style.borderColor = '#4caf50';
       logEl.textContent = '';
       btn.textContent = '⬆ CARGAR LISTA COMPLETA';
       btn.disabled = false;
     } catch(e) {
       preview.style.color = '#e63946';
       preview.textContent = '❌ ' + e;
+      label.style.borderColor = '#e63946';
     }
   });
 
