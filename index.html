@@ -588,9 +588,12 @@
     <p>SISTEMA DE ETIQUETAS · ACCESO</p>
     <div class="field">
       <label>Usuario</label>
-      <select id="loginUser">
-        <option value="" disabled selected>Selecciona tu usuario...</option>
-      </select>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <select id="loginUser" style="flex:1;">
+          <option value="" disabled selected>Selecciona tu usuario...</option>
+        </select>
+        <button onclick="cargarUsuariosLogin()" title="Recargar lista" style="padding:8px 12px;background:#111;border:1px solid #333;border-radius:6px;color:#aaa;cursor:pointer;font-size:1rem;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--yellow)'" onmouseout="this.style.borderColor='#333'">↻</button>
+      </div>
     </div>
     <div class="field">
       <label>Contraseña</label>
@@ -1029,22 +1032,33 @@
   // Cargar usuarios en el select del login
   async function cargarUsuariosLogin() {
     const select = document.getElementById('loginUser');
-    select.innerHTML = '<option value="" disabled selected>Selecciona tu usuario...</option>';
-    try {
-      const snap = await getDocs(usuariosCol);
-      snap.docs.forEach(docSnap => {
-        const u = docSnap.data();
-        const opt = document.createElement('option');
-        opt.value = u.username;
-        opt.textContent = u.username.charAt(0).toUpperCase() + u.username.slice(1);
-        select.appendChild(opt);
-      });
-    } catch(e) {
-      const opt = document.createElement('option');
-      opt.value = '';
-      opt.textContent = 'Error al cargar usuarios';
-      opt.disabled = true;
-      select.appendChild(opt);
+    select.innerHTML = '<option value="" disabled selected>Cargando usuarios...</option>';
+    let intentos = 0;
+    while (intentos < 3) {
+      try {
+        const snap = await getDocs(usuariosCol);
+        select.innerHTML = '<option value="" disabled selected>Selecciona tu usuario...</option>';
+        if (snap.empty) {
+          select.innerHTML = '<option value="" disabled selected>Sin usuarios registrados</option>';
+          return;
+        }
+        snap.docs.forEach(docSnap => {
+          const u = docSnap.data();
+          const opt = document.createElement('option');
+          opt.value = u.username;
+          opt.textContent = u.username.charAt(0).toUpperCase() + u.username.slice(1);
+          select.appendChild(opt);
+        });
+        return; // éxito
+      } catch(e) {
+        intentos++;
+        if (intentos >= 3) {
+          select.innerHTML = '<option value="" disabled selected>Error al cargar — recarga la página</option>';
+          console.error('cargarUsuariosLogin error:', e);
+        } else {
+          await new Promise(r => setTimeout(r, 1000)); // esperar 1s antes de reintentar
+        }
+      }
     }
   }
 
@@ -1087,6 +1101,8 @@
       document.getElementById('btnAdminPanel').style.display = 'inline-block';
       document.getElementById('btnProductPanel').style.display = 'inline-block';
     }
+    // Limpiar etiquetas al iniciar sesión
+    document.getElementById('savedList').innerHTML = '';
   }
 
   function doLogout() {
@@ -1098,6 +1114,8 @@
     document.getElementById('loginUser').selectedIndex = 0;
     document.getElementById('loginPass').value = '';
     document.getElementById('loginError').textContent = '';
+    // Limpiar etiquetas agregadas
+    document.getElementById('savedList').innerHTML = '';
   }
 
   function abrirAdmin() {
@@ -1476,6 +1494,7 @@
   });
 
   // Exponer funciones al scope global para los onclick del HTML
+  window.cargarUsuariosLogin = cargarUsuariosLogin;
   window.cambiarPassword = cambiarPassword;
   window.toggleCambiarPass = toggleCambiarPass;
   window.doLogin = doLogin;
