@@ -780,7 +780,7 @@
 <script type="module">
   // ===== FIREBASE CONFIG =====
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDBakpz_zvbKJzB3TcL1gnB-zFFLdIpEG4",
@@ -1030,36 +1030,27 @@
   }
 
   // Cargar usuarios en el select del login
-  async function cargarUsuariosLogin() {
+  function cargarUsuariosLogin() {
     const select = document.getElementById('loginUser');
     select.innerHTML = '<option value="" disabled selected>Cargando usuarios...</option>';
-    let intentos = 0;
-    while (intentos < 3) {
-      try {
-        const snap = await getDocs(usuariosCol);
-        select.innerHTML = '<option value="" disabled selected>Selecciona tu usuario...</option>';
-        if (snap.empty) {
-          select.innerHTML = '<option value="" disabled selected>Sin usuarios registrados</option>';
-          return;
-        }
-        snap.docs.forEach(docSnap => {
-          const u = docSnap.data();
-          const opt = document.createElement('option');
-          opt.value = u.username;
-          opt.textContent = u.username.charAt(0).toUpperCase() + u.username.slice(1);
-          select.appendChild(opt);
-        });
-        return; // éxito
-      } catch(e) {
-        intentos++;
-        if (intentos >= 3) {
-          select.innerHTML = '<option value="" disabled selected>Error al cargar — recarga la página</option>';
-          console.error('cargarUsuariosLogin error:', e);
-        } else {
-          await new Promise(r => setTimeout(r, 1000)); // esperar 1s antes de reintentar
-        }
+
+    onSnapshot(usuariosCol, (snap) => {
+      select.innerHTML = '<option value="" disabled selected>Selecciona tu usuario...</option>';
+      if (snap.empty) {
+        select.innerHTML = '<option value="" disabled selected>Sin usuarios registrados</option>';
+        return;
       }
-    }
+      snap.docs.forEach(docSnap => {
+        const u = docSnap.data();
+        const opt = document.createElement('option');
+        opt.value = u.username;
+        opt.textContent = u.username.charAt(0).toUpperCase() + u.username.slice(1);
+        select.appendChild(opt);
+      });
+    }, (error) => {
+      console.error('Error cargando usuarios:', error);
+      select.innerHTML = '<option value="" disabled selected>Error — presiona ↻</option>';
+    });
   }
 
   async function doLogin() {
@@ -1482,8 +1473,8 @@
 
   // Al cargar: verificar sesión activa e inicializar
   window.addEventListener('load', async () => {
-    // Cargar usuarios primero (independiente de initAdmin)
-    await cargarUsuariosLogin();
+    // Escucha en tiempo real los usuarios (no async)
+    cargarUsuariosLogin();
 
     // initAdmin en paralelo sin bloquear
     initAdmin().catch(e => console.warn('initAdmin:', e));
@@ -1496,10 +1487,10 @@
   });
 
   // Si el select se abre vacío, recargar automáticamente
-  document.getElementById('loginUser').addEventListener('focus', async () => {
+  document.getElementById('loginUser').addEventListener('focus', () => {
     const select = document.getElementById('loginUser');
     if (select.options.length <= 1) {
-      await cargarUsuariosLogin();
+      cargarUsuariosLogin();
     }
   });
 
