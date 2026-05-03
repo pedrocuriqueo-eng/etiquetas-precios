@@ -749,6 +749,36 @@
 </div>
 
 <script type="module">
+  // ===== FIREBASE CONFIG =====
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDBakpz_zvbKJzB3TcL1gnB-zFFLdIpEG4",
+    authDomain: "etiquetas-luna-de-perla.firebaseapp.com",
+    projectId: "etiquetas-luna-de-perla",
+    storageBucket: "etiquetas-luna-de-perla.firebasestorage.app",
+    messagingSenderId: "776154042632",
+    appId: "1:776154042632:web:0dd8bb77533f20ad4b9cbd"
+  };
+
+  const firebaseApp = initializeApp(firebaseConfig);
+  const db = getFirestore(firebaseApp);
+  const usuariosCol = collection(db, 'usuarios');
+  const productosCol = collection(db, 'productos');
+  let todosLosProductos = [];
+
+  // Crear admin por defecto si no existe
+  async function initAdmin() {
+    try {
+      const q = query(usuariosCol, where('username', '==', 'admin'));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        await addDoc(usuariosCol, { username: 'admin', password: 'admin123', role: 'admin' });
+      }
+    } catch(e) { console.error('initAdmin error:', e); }
+  }
+
   const symbol = '$';
   let fontPrecio = 'medium';
   let fontNombre = 'medium';
@@ -965,32 +995,6 @@
     ventana.document.close();
   }
 
-  // ===== FIREBASE CONFIG =====
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDBakpz_zvbKJzB3TcL1gnB-zFFLdIpEG4",
-    authDomain: "etiquetas-luna-de-perla.firebaseapp.com",
-    projectId: "etiquetas-luna-de-perla",
-    storageBucket: "etiquetas-luna-de-perla.firebasestorage.app",
-    messagingSenderId: "776154042632",
-    appId: "1:776154042632:web:0dd8bb77533f20ad4b9cbd"
-  };
-
-  const firebaseApp = initializeApp(firebaseConfig);
-  const db = getFirestore(firebaseApp);
-  const usuariosCol = collection(db, 'usuarios');
-
-  // Crear admin por defecto si no existe
-  async function initAdmin() {
-    const q = query(usuariosCol, where('username', '==', 'admin'));
-    const snap = await getDocs(q);
-    if (snap.empty) {
-      await addDoc(usuariosCol, { username: 'admin', password: 'admin123', role: 'admin' });
-    }
-  }
-
   function getSession() {
     const s = sessionStorage.getItem('lp_session');
     return s ? JSON.parse(s) : null;
@@ -1192,9 +1196,6 @@
     }
   }
 
-  const productosCol = collection(db, 'productos');
-  let todosLosProductos = [];
-
   // ===== PRODUCTOS =====
   async function cargarProductos() {
     try {
@@ -1319,7 +1320,8 @@
     });
   }
 
-
+  // Al cargar: verificar sesión activa e inicializar
+  window.addEventListener('load', async () => {
     await initAdmin();
     await cargarUsuariosLogin();
     await cargarProductos();
