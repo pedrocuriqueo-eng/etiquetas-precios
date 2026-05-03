@@ -1047,7 +1047,7 @@
         const u = docSnap.data();
         const opt = document.createElement('option');
         opt.value = u.username;
-        opt.textContent = u.username.charAt(0).toUpperCase() + u.username.slice(1);
+        opt.textContent = u.username.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
         select.appendChild(opt);
       });
     }, (error) => {
