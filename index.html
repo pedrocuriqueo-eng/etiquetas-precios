@@ -815,9 +815,9 @@
       <label>Tamaño fuente — Nombre</label>
       <div class="toggle-group">
         <button class="toggle-btn" onclick="setFontNombre(this,'small')">Chico</button>
-        <button class="toggle-btn active" onclick="setFontNombre(this,'medium')">Medio</button>
+        <button class="toggle-btn" onclick="setFontNombre(this,'medium')">Medio</button>
         <button class="toggle-btn" onclick="setFontNombre(this,'large')">Grande</button>
-        <button class="toggle-btn" onclick="setFontNombre(this,'xlarge')">XL</button>
+        <button class="toggle-btn active" onclick="setFontNombre(this,'xlarge')">XL</button>
       </div>
     </div>
 
@@ -878,7 +878,7 @@
 
   const symbol = '$';
   let fontPrecio = 'xlarge';
-  let fontNombre = 'medium';
+  let fontNombre = 'xlarge';
 
   const precioSizeMap = { small: 42, medium: 58, large: 72, xlarge: 88 };
   const nombreSizeMap = { small: 16, medium: 22, large: 28, xlarge: 34 };
