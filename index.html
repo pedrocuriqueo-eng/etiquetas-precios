@@ -1038,31 +1038,34 @@
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body {
-            width: 72mm;
+            width: 80mm;
             font-family: 'Courier New', monospace;
             background: #fff;
             color: #000;
-            padding: 3mm 2mm;
+            padding: 2mm 0;
           }
           .etiqueta-termica {
             width: 100%;
-            margin-bottom: 4mm;
+            margin-bottom: 3mm;
             text-align: left;
+            padding: 0 2mm;
           }
           .et-nombre {
-            font-size: 14pt;
+            font-size: 16pt;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0px;
             border-top: 2px solid #000;
             padding-top: 2mm;
-            padding-left: 1mm;
+            padding-left: 0;
+            line-height: 1.1;
+            word-break: break-word;
           }
           .et-precio {
-            font-size: 28pt;
+            font-size: 36pt;
             font-weight: 900;
             letter-spacing: -1px;
-            padding-left: 1mm;
+            padding-left: 0;
             line-height: 1.1;
           }
           .et-separador {
@@ -1070,7 +1073,7 @@
             margin-top: 3mm;
           }
           @media print {
-            body { width: 72mm; }
+            body { width: 80mm; }
             @page {
               size: 80mm auto;
               margin: 0;
